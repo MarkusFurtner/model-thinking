@@ -3,6 +3,7 @@
 class Model:
     def __init__(self):
         self.M = 900 #number of machines or capital
+        self.year = 0
         #The value on position n represents the number of people of age n in society 
         self.demo = [
             5,5,5,5,5,5,5,5,5,5,
@@ -34,11 +35,15 @@ class Model:
         L = self.workers()
         N = self.nonworkers()
         
-        O = ((1+i/30)*L*self.M)**0.5 #workers get more qualified 
-        I = O-0.5*N-L*(0.5+i/30) #workers consume increases
+        adv = self.year / 30
+        
+        O = ((1+adv)*L*self.M)**0.5 #workers get more qualified 
+        I = O-0.5*N-L*(0.5+adv) #workers consume increases
         
         self.M = 0.9*self.M+I   #depretiation 10%
-        R = (((1+i/30)*L*self.M)**0.5)/O #growth rate
+        R = (((1+adv)*L*self.M)**0.5)/O #growth rate
+        
+        self.year += 1
         
         return (R, O, self.M, I, L, N)
 
