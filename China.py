@@ -1,46 +1,56 @@
 #! /usr/bin/env python
 
-M=900 #number of machines or capital
-demography=[5,5,5,5,5,5,5,5,5,5,
-           5,5,5,5,5,5,5,5,5,5,
-           10,10,10,10,10,10,10,10,10,10,
-           10,10,10,10,10,10,10,10,10,10,
-           10,10,10,10,10,10,10,10,10,10,
-           10,10,10,10,10,10,10,10,10,10,
-           10,10,10,10,10,10,10,10,10,10,
-           5,5,5,5,5,5,5,5,5,5,
-           5,5,5,5,5,5,5,5,5,5,
-           5,5,5,5,5,5,5,5,5,5]
-#The value on position n represents the number of people of age n in society 
-print (sum(demography)) 
-print ("citizens")
-def workers(demo):
-    return sum(demo[20:70])
-               
-L = workers(demography)
-print (L)
-print ("workers")
-def nonworkers(demo):
-    N= sum(demo[0:20])+sum(demo[70:100])
-    return N
+class Model:
+    def __init__(self):
+        self.M = 900 #number of machines or capital
+        #The value on position n represents the number of people of age n in society 
+        self.demo = [
+            5,5,5,5,5,5,5,5,5,5,
+            5,5,5,5,5,5,5,5,5,5,
+            10,10,10,10,10,10,10,10,10,10,
+            10,10,10,10,10,10,10,10,10,10,
+            10,10,10,10,10,10,10,10,10,10,
+            10,10,10,10,10,10,10,10,10,10,
+            10,10,10,10,10,10,10,10,10,10,
+            5,5,5,5,5,5,5,5,5,5,
+            5,5,5,5,5,5,5,5,5,5,
+            5,5,5,5,5,5,5,5,5,5
+            ]
 
-N=nonworkers(demography)
-print (N)
-print ("nonworkers")
+    def population(self):
+        return sum(self.demo)
+        
+    def workers(self):
+        return sum(self.demo[20:70])
 
-def age_demography(demo):
-    return [int(workers(demo)/50)] + demo[0:99]
+    def nonworkers(self):
+        return self.population() - self.workers()
+
+    def age_demography(self):
+        self.demo = [int(self.workers() / 50)] + self.demo[0:99]
+        
+    def step(self):
+        self.age_demography()
+        L = self.workers()
+        N = self.nonworkers()
+        
+        O = ((1+i/30)*L*self.M)**0.5 #workers get more qualified 
+        I = O-0.5*N-L*(0.5+i/30) #workers consume increases
+        
+        self.M = 0.9*self.M+I   #depretiation 10%
+        R = (((1+i/30)*L*self.M)**0.5)/O #growth rate
+        
+        return (R, O, self.M, I, L, N)
+
+model = Model()
+
+print model.population(), "citizens"
+print model.workers(), "workers"
+print model.nonworkers(), "nonworkers"
 
 #every year the demography shifts and the newborn dependent on workers
 print ("growth rate, output, Capital, Investment, Ration Workers/Nonworkers, citzens")
 for i in range(0, 50):
-    demography=age_demography(demography)
-    L= workers(demography)
-    N=nonworkers(demography)
-    O=((1+i/30)*L*M)**0.5 #workers get more qualified 
-    I=O-0.5*N-L*(0.5+i/30) #workers consume increases
-    
-    M=0.9*M+I   #depretiation 10%
-    R=(((1+i/30)*L*M)**0.5)/O #growth rate
-    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(sum(demography)))
-print (demography)   
+    (R, O, M, I, L, N) = model.step()
+    print int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population())
+print model.demo
