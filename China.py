@@ -49,13 +49,13 @@ class Model:
 
 model = Model()
 
-print model.population(), "citizens"
-print model.workers(), "workers"
-print model.nonworkers(), "nonworkers"
+print (model.population(), "citizens")
+print (model.workers(), "workers")
+print (model.nonworkers(), "nonworkers")
 
 #every year the demography shifts and the newborn dependent on workers
 print ("Growth rate, Output, Capital, Investment, Ratio workers/nonworkers, Population")
 for i in range(0, 50):
     (R, O, M, I, L, N) = model.step()
-    print int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population())
-print [int(x) for x in model.demo]
+    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population()))
+print ([int(x) for x in model.demo])
