@@ -38,9 +38,9 @@ class Model:
         adv = self.year / 30.0
         
         O = ((1+adv)*L*self.M)**0.5 #workers get more qualified 
-        I = O-0.5*N-L*(0.5+adv) #workers consume increases
+        I = O*(1-(0.5*N+0.7*L)/(L+N)) #workers consume increases, GDP per capita represented by O/(L+N) 
         
-        self.M = 0.9*self.M+I   #depretiation 10%
+        self.M = 0.9*self.M+I   #depreciation 10%
         R = (((1+adv)*L*self.M)**0.5)/O #growth rate
         
         self.year += 1
