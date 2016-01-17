@@ -1,6 +1,6 @@
+#! /usr/bin/env python
 
-
-M=900 #number of mashines or capital
+M=900 #number of machines or capital
 demography=[5,5,5,5,5,5,5,5,5,5,
            5,5,5,5,5,5,5,5,5,5,
            10,10,10,10,10,10,10,10,10,10,
@@ -28,15 +28,13 @@ N=nonworkers(demography)
 print (N)
 print ("nonworkers")
 
-def next_year(demo):
-    for j in range(1,100):
-        demo[100-j]=demo[99-j]
-    demo[0]= int(workers(demo)/50)    
-    return demo
+def age_demography(demo):
+    return [int(workers(demo)/50)] + demo[0:99]
+
 #every year the demography shifts and the newborn dependent on workers
 print ("growth rate, output, Capital, Investment, Ration Workers/Nonworkers, citzens")
-for i in range(0,50):
-    demography=next_year(demography)
+for i in range(0, 50):
+    demography=age_demography(demography)
     L= workers(demography)
     N=nonworkers(demography)
     O=((1+i/30)*L*M)**0.5 #workers get more qualified 
@@ -44,5 +42,5 @@ for i in range(0,50):
     
     M=0.9*M+I   #depretiation 10%
     R=(((1+i/30)*L*M)**0.5)/O #growth rate
-    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int((sum(demography))))
+    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(sum(demography)))
 print (demography)   
