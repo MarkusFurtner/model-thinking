@@ -38,9 +38,9 @@ class Model:
         adv = self.year / 30.0
         
         O = ((1+adv)*L*self.M)**0.5 #workers get more qualified 
-        I = O-0.5*N-L*(0.5+adv) #workers consume increases
+        I = O*(1-(0.5*N+0.7*L)/(L+N)) #workers consume increases, GDP per capita represented by O/(L+N) 
         
-        self.M = 0.9*self.M+I   #depretiation 10%
+        self.M = 0.9*self.M+I   #depreciation 10%
         R = (((1+adv)*L*self.M)**0.5)/O #growth rate
         
         self.year += 1
@@ -49,13 +49,13 @@ class Model:
 
 model = Model()
 
-print model.population(), "citizens"
-print model.workers(), "workers"
-print model.nonworkers(), "nonworkers"
+print (model.population(), "citizens")
+print (model.workers(), "workers")
+print (model.nonworkers(), "nonworkers")
 
 #every year the demography shifts and the newborn dependent on workers
 print ("Growth rate, Output, Capital, Investment, Ratio workers/nonworkers, Population")
 for i in range(0, 50):
     (R, O, M, I, L, N) = model.step()
-    print int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population())
-print [int(x) for x in model.demo]
+    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population()))
+print ([int(x) for x in model.demo])
