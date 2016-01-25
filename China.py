@@ -1,5 +1,8 @@
 #! /usr/bin/env python
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 class Model:
     def __init__(self):
         self.M = 900.0 #number of machines or capital
@@ -53,9 +56,50 @@ print (model.population(), "citizens")
 print (model.workers(), "workers")
 print (model.nonworkers(), "nonworkers")
 
+growth_data = []
+output_data = []
+capital_data = []
+investment_data = []
+ratio_data = []
+pop_data = []
+
 #every year the demography shifts and the newborn dependent on workers
 print ("Growth rate, Output, Capital, Investment, Ratio workers/nonworkers, Population")
-for i in range(0, 50):
+for i in range(0, 200):
     (R, O, M, I, L, N) = model.step()
-    print (int(R*1000), int(O), int(M), int(I) , int((L/N)*100), int(model.population()))
+    pop = model.population()
+    ratio = L/N
+    print (int(R*1000), int(O), int(M), int(I) , int(ratio*100), int(pop))
+    growth_data.append(R)
+    output_data.append(O)
+    capital_data.append(M)
+    investment_data.append(I)
+    ratio_data.append(ratio)
+    pop_data.append(pop)
 print ([int(x) for x in model.demo])
+
+plt.subplot(6,1,1)
+plt.plot(growth_data)
+plt.ylabel("Growth rate")
+
+plt.subplot(6,1,2)
+plt.plot(output_data)
+plt.ylabel("Output")
+
+plt.subplot(6,1,3)
+plt.plot(capital_data)
+plt.ylabel("Capital")
+
+plt.subplot(6,1,4)
+plt.plot(investment_data)
+plt.ylabel("Investment")
+
+plt.subplot(6,1,5)
+plt.plot(ratio_data)
+plt.ylabel("Ratio")
+
+plt.subplot(6,1,6)
+plt.plot(pop_data)
+plt.ylabel("Population")
+
+plt.show()
