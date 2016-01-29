@@ -276,38 +276,51 @@ class Model:
     def workers(self):
         return sum(self.demo[20:70])
 
+    def old_population(self):
+        return sum(self.demo[70:])
+
     def nonworkers(self):
         return self.population() - self.workers()
 
-    def age_demography(self):
+    def age_demography(self, healthcare_per_old_person):
+        exponent = healthcare_per_old_person / 2.356230
+        plt = adjust_period_life_table(self.plt, exponent)
+
         new_demo = [self.workers() / 50.0]
         for age in range(len(self.plt)):
             if age < len(self.demo):
-                new_demo.append(self.demo[age] * (1-self.plt[age][0]))
+                new_demo.append(self.demo[age] * (1-plt[age][0]))
         self.demo = new_demo
+        return life_expectancy(plt)
 
     def step(self):
-        self.age_demography()
         L = self.workers()
         N = self.nonworkers()
 
         adv = self.year / 30.0
 
         O = ((1+adv)*L*self.M)**0.5 #workers get more qualified
-        I = O*(1-(0.5*N+0.7*L)/(L+N)) #workers consume increases, GDP per capita represented by O/(L+N)
+        I = 0.3 * O
+        #I = O*(1-(0.5*N+0.7*L)/(L+N)) #workers consume increases, GDP per capita represented by O/(L+N)
 
         self.M = 0.9*self.M+I   #depreciation 10%
         R = (((1+adv)*L*self.M)**0.5)/O #growth rate
 
+        # investment in healthcare is 20%
+        healthcare_per_old_person = 0.2 * O / self.old_population()
+        print("healthcare: ", healthcare_per_old_person)
+        LE = self.age_demography(healthcare_per_old_person)
         self.year += 1
 
-        return (R, O, self.M, I, L, N)
+        return (R, O, self.M, I, L, N, LE)
 
 # We use the male PLT, which is already close to China's
 # life expectancy of 75.2, and adjust it a little.
 china_period_life_table = adjust_period_life_table(period_life_table_for_sex(True), 0.972)
 
-model = Model(china_period_life_table, [l[0]/1000000.0 for l in chinese_demographics])
+demographics = [l[0]/1000000.0 for l in chinese_demographics]
+#demographics = [10 for l in range(100)]
+model = Model(china_period_life_table, demographics)
 
 print (model.population(), "citizens")
 print (model.workers(), "workers")
@@ -319,20 +332,22 @@ capital_data = []
 investment_data = []
 ratio_data = []
 pop_data = []
+le_data = []
 
 #every year the demography shifts and the newborn dependent on workers
-print ("Growth rate, Output, Capital, Investment, Ratio workers/nonworkers, Population")
+print ("Growth rate, Output, Capital, Investment, Ratio workers/nonworkers, Population, Life expectancy")
 for i in range(0, 100):
-    (R, O, M, I, L, N) = model.step()
+    (R, O, M, I, L, N, LE) = model.step()
     pop = model.population()
     ratio = L/N
-    print (int(R*1000), int(O), int(M), int(I) , int(ratio*100), int(pop))
+    print (int(R*1000), int(O), int(M), int(I) , int(ratio*100), int(pop), int(LE))
     growth_data.append(R)
     output_data.append(O)
     capital_data.append(M)
     investment_data.append(I)
     ratio_data.append(ratio)
     pop_data.append(pop)
+    le_data.append(LE)
 print ([int(x) for x in model.demo])
 
 plt.subplot(6,1,1)
@@ -348,15 +363,15 @@ plt.plot(capital_data)
 plt.ylabel("Capital")
 
 plt.subplot(6,1,4)
-plt.plot(investment_data)
-plt.ylabel("Investment")
-
-plt.subplot(6,1,5)
 plt.plot(ratio_data)
 plt.ylabel("Ratio")
 
-plt.subplot(6,1,6)
+plt.subplot(6,1,5)
 plt.plot(pop_data)
 plt.ylabel("Population")
+
+plt.subplot(6,1,6)
+plt.plot(le_data)
+plt.ylabel("Life expectancy")
 
 plt.show()
