@@ -132,6 +132,7 @@ period_life_table = [
 ]
 
 # Source: http://www.stats.gov.cn/tjsj/pcsj/rkpc/6rp/html/A0301a.htm
+# Total, male, female
 chinese_demographics = [
     [13786434, 7461199, 6325235],
     [15657955, 8574973, 7082982],
