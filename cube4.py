@@ -13,7 +13,7 @@ def minus(a):
 #print (x)
 #print (a)
 
-CUBE_SIZE=3
+CUBE_SIZE=4
 directions=[[1,0,0],[0,1,0],[0,0,1],[-1,0,0],[0,-1,0],[0,0,-1]]
 cube=[]
 def in_cube(n):
@@ -25,12 +25,12 @@ def in_cube(n):
 cube= in_cube(CUBE_SIZE) 
 #print (len(cube))
 #print (cube)
-L=[[0,0,0]]
+L=[[0,1,0]]
 n=0
 d=0
 D=[]
-J=[0,3,5,7,9,10,11,12,14,16,17,18,20,21,23,24,25]
-#J=[0,4,5,8,9,10,11,12,14,15,16,17,18,19,21,22,25,26,28,30,33,34,36,37,38,39,40,41,42,43,44,45,48,49,52,53,56,59,62]
+#J=[0,3,5,7,9,10,11,12,14,16,17,18,20,21,23,24,25]
+J=[0,4,5,8,9,10,11,12,14,15,16,17,18,19,21,22,25,26,28,30,33,34,36,37,38,39,40,41,42,43,44,45,48,49,52,53,56,59,62]
 def change_direction(Li,Di,direction):
     while (direction+1)%6 == Di[-1]:
         Li.pop()
@@ -39,8 +39,8 @@ def change_direction(Li,Di,direction):
         while len(Li) not in J:
             Li.pop()
             direction=Di.pop()
-            if Di==[]:
-                L=[[1,0,0]]
+            #if Di==[]:
+               # L=[[1,0,0]]
             if len(Li)<10:
                 print (Li,Di)
         
@@ -85,9 +85,6 @@ def steps(Li,Di,di):
                 Di.pop() 
             (Li,Di,di)=change_direction(Li,Di,di)    
     
-       
-        
-        
     #print ('steps')    
     #print (Li,Di,di)
 
@@ -100,7 +97,7 @@ while n in range(0,CUBE_SIZE**3):
     (L,D,d)= steps(L,D,d)
     n=len(L)
     i +=1
-    if i==0%1000000:
+    if i%1000000==0:
         print(i)
     if len(L)> CUBE_SIZE**3-1:
         
